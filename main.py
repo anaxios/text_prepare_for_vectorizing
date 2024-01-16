@@ -4,6 +4,9 @@ import hashlib
 import requests
 import time
 import sys
+import os
+
+working_directory = os.getcwd()
 
 def hash_string(input_string):
     sha_signature = hashlib.sha256(input_string.encode()).hexdigest()
@@ -15,8 +18,8 @@ class ParagraphFormatter:
     def __init__(self, file_path):
         with open(file_path, 'r') as file:
             content = file.read()
-        # paragraphs = content.split('\n\n')  # split by blank lines
-        paragraphs = content.split('__________________________________________________________________')  # split by blank lines
+        paragraphs = content.split('\n\n')  # split by blank lines
+        # paragraphs = content.split('__________________________________________________________________')  # split by pages
         self.formatted_paragraphs = [[{"pageContent": p, "metadata": {}}] for p in paragraphs]
         self.ids = [{"id": [hash_string(i)]} for i in paragraphs]
         self.index = 0
@@ -82,22 +85,25 @@ def split_array(arr, delimiter):
         result.append(temp)
     return result
 
-def main(filename):
-    
-    with open(filename, 'r') as file:
+def main(file_path):
+    filename = os.path.basename(file_path)
+
+    with open(file_path, 'r') as file:
         content = file.read()
-    references = extract_references_from_file(filename)
+    references = extract_references_from_file(file_path)
     paragraphs = extract_paragraphs(content)
     paragraphs = remove_paragraphs_with_bracketed_numbers(paragraphs)
     paragraphs = [replace_bracketed_numbers_with_dict_values(paragraph, references) for paragraph in paragraphs]
     # paragraphs = [remove_fileurls(paragraph) for paragraph in paragraphs]
+    
+    temp_file = f'{working_directory}/tmp/{filename}_tmp'
 
-    with open(f'tmp/{filename}_tmp', 'a') as file:  # Open the file in append mode
+    with open(temp_file, 'a') as file:  # Open the file in append mode
         for i, book in enumerate(paragraphs):
             file.write(book)
             file.write('\n\n')  # Append double newlines after each element
 
-    formatter = ParagraphFormatter(f'tmp/{filename}_tmp')
+    formatter = ParagraphFormatter(temp_file)
 
 
     headers = {
@@ -107,7 +113,7 @@ def main(filename):
     for result in formatter:
         response = requests.post("https://langchain-workers.derelict.workers.dev/input", headers=headers, json=result)
         print(f"{response.status_code} + {json.dumps(result)}")
-        time.sleep(1)
+        # time.sleep(1)
         # print(f"{json.dumps(result)}")
 
 
