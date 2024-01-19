@@ -117,7 +117,7 @@ def main(file_path):
 
     for result in paragraphs:
         response = requests.post("https://langchain-workers.derelict.workers.dev/input", headers=headers, json=result)
-        print(f"{response.status_code} + {json.dumps(result)}")
+        print(f"{response.status_code} {json.dumps(response.text)} + {json.dumps(result)}")
         # time.sleep(1)
         # print(f"{json.dumps(result)}")
 

@@ -1,9 +1,12 @@
 import hashlib
 import sys
 
-def hash_string(input_string):
-    sha_signature = hashlib.sha256(input_string.encode()).hexdigest()
-    print(sha_signature[:31])
+def main(args):
+    _, len, data, *_ = args
+    sha_signature = hashlib.sha256(data.encode()).hexdigest()
+    len = int(len) 
+    len = len if len < 64 or len > 1 else 64
+    print(sha_signature[:len])
 
 if __name__ == "__main__":
-    hash_string(sys.argv[1])
+    main(sys.argv)
