@@ -31,7 +31,7 @@ const bookTitle = (n: number) => books[n]
                                     book: (typeof e.h2 === 'object') ? e.h2['#text'] : e.h2
                                     ,author: authors[ n - 1 ]
                                     ,chapters: [...e.div3.map(e => ({
-                                        title: (typeof e.h3 === 'object') ? e.h3['#text'] : e.h3
+                                        chapter: (typeof e.h3 === 'object') ? e.h3['#text'] : e.h3
                                         ,body: Array.isArray(e.p) ? e.p.map(e => (e['#text'])).filter(Boolean) : e.p['#text']
                                     }))]
   
