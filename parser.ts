@@ -49,15 +49,15 @@ const bookTitle = (n: number) => books[n]
 // console.log(authors);
 
 
-const formatted = bookTitle(3).map(e => (e.chapters.map(f => ({
+const formatted = bookTitle(7).map(e => (e.chapters.map(f => ({
     pageContent: (Array.isArray(f.body)) ? f.body.join(' ') : f.body
     ,metadata: {Author: e.author, Book: e.book, Chapter: f.title, Volume: baseName }
 })))).flat();
 
-const ids = { ids: formatted.map(e => getSHA256Hash(e.pageContent))};
+const ids = { ids: formatted.map(e => e.pageContent ? getSHA256Hash(e.pageContent) : "no content")};
 
 const res = [formatted, ids];
 
 await Bun.write('text.json', JSON.stringify(res, null, 2));
 console.log(util.inspect(res, { depth: null, colors: true }));
-console.log(util.inspect(ids, { depth: null, colors: true }));
+console.log(util.inspect(authors, { depth: null, colors: true }));
