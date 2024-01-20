@@ -64,7 +64,7 @@ const hasH = (section: object) => {
 // .filter(Boolean)
 // .flat()
 
-let result: string[] = [];
+let result: any[] = [];
 const viewKeyTree = (result: string[], obj: object, max: number, count:number = 0) => {
     if (max === count) return result;
         for (let key in obj) {
@@ -79,33 +79,24 @@ const viewKeyTree = (result: string[], obj: object, max: number, count:number = 
     // }
 }
 
-const extractHandDIVs = (result: string[], obj: object, max: number, count:number = 0) => {
+const extractHandDIVs = (result: any[], obj: object, max: number, count:number = 0) => {
     if (max === count) return result;
         for (let key in obj) {
-            //if (typeof obj[key] !== 'object' || obj[key] === null) {return result}
             if (obj.hasOwnProperty(key)) {
-               if(DIV(key) || H(key)) result.push(`${Array(count).fill('_').join('')} ${obj[key]}`); // print the key
+               if(DIV(key) || H(key)) result.push({ depth: count, content: obj[key]}); // print the key
                 if (typeof obj[key] === 'object' && obj[key] !== null) {
                     extractHandDIVs(result, obj[key], max, count + 1); // recursive call
                 }
         }
     }
-    // }
-}
-// authors.forEach((e, i) => 
-//     console.log(author(i), titles(i), body(i)));
+ 
 
 
-// console.log(author(n), titles(n), body(n));
 
-// console.log(util.inspect(bookTitle(1), { depth: null, colors: true }));
-// console.log(authors);
-
-
-// const formatted = bookTitle(3).map(e => (e.chapters.map(f => ({
-//     pageContent: (Array.isArray(f.body)) ? f.body.join(' ') : f.body
-//     ,metadata: {Author: e.author, Book: e.book, Chapter: f.chapter, Volume: baseName }
-// })))).flat();
+const formatted = result.map(e => (e.chapters.map(f => ({
+    pageContent: (Array.isArray(f.body)) ? f.body.join(' ') : f.body
+    ,metadata: {Author: e.author, Book: e.book, Chapter: f.chapter, Volume: baseName }
+})))).flat();
 
 // const ids = { ids: formatted.map(e => e.pageContent ? getSHA256Hash(e.pageContent) : "no content")};
 
@@ -118,5 +109,6 @@ const extractHandDIVs = (result: string[], obj: object, max: number, count:numbe
 
 // chapterTest(json, 7);
 extractHandDIVs(result, json, 50)
-console.log('text.json', result.join('\n'));
-await Bun.write('text.json', result.join('\n'));
+console.log('text.json', result.map(e => `${e.depth} ${e.content}`).join('\n'));
+// console.log(util.inspect(result, { depth: null, colors: true }));
+// await Bun.write('text.json', result.join('\n'));
