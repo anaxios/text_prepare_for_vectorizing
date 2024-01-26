@@ -1,7 +1,10 @@
 {
   "type": "module",
   "dependencies": {
-    "fs": "^0.0.1-security"
+    "@types/yargs": "^17.0.32",
+    "fs": "^0.0.1-security",
+    "levenshtein": "^1.0.5",
+    "yargs": "^17.7.2"
   },
   "name": "text_prepare_for_vectorizing",
   "version": "1.0.0",
